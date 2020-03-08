@@ -24,7 +24,7 @@
       :center="[this.lon, this.lat]"
     >
       <MglMarker
-        :coordinates.sync="markerCoordinates"
+        :coordinates.sync="[this.lon, this.lat]"
         draggable="draggable"
         color="green"
         @dragend="onDragend"
