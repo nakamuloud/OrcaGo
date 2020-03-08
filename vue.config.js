@@ -1,4 +1,4 @@
 module.exports = {
-  publicPath: '/OrcaGo/',
-  outputDir: 'docs'
-}
+    publicPath: '/OrcaGo/',
+    outputDir: 'docs',
+    transpileDependencies: ['vuetify']
