@@ -12,7 +12,7 @@
         @click="changeMode"
       >
         <v-icon>mdi-plus</v-icon></v-btn
-      >
+      >t
     </div>
     <Grampas :isEnabled="mode" />
     <mapbox
@@ -22,12 +22,12 @@
       :zoom="zoom"
       @load="mapLoaded"
       :center="mapCenter"
-      @dragend="onDragend"
     >
       <MglMarker
         :coordinates.sync="markerCoordinates"
         draggable="draggable"
         color="green"
+        @dragend="onDragend"
       />
     </mapbox>
   </div>
@@ -50,7 +50,7 @@ export default {
         'pk.eyJ1IjoibmFrYW11bG91ZCIsImEiOiJjazc4cWY0d28wbGF1M2VwNXk1eno4bjN3In0.MG5S58nJXJNB_o0LKdeH0w', // your access token. Needed if you using Mapbox maps
       mapStyle: 'mapbox://styles/mapbox/streets-v11', // your map style
       antialias: true,
-      mapCenter: [35.160821, 46.899355],
+      mapCenter: { lon: 80, lat: 30 },
       markerCoordinates: [50, 50],
       mode: false,
       zoom: 5,

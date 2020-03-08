@@ -25,5 +25,34 @@ export default {
   bottom: 0;
   right: 0;
   margin: auto;
+
+  animation: grampas_animation 3s ease infinite;
+}
+
+@keyframes grampas_animation {
+  0% {
+    transform: translateY(0);
+  }
+  5% {
+    transform: translateY(0);
+  }
+  10% {
+    transform: translateY(0);
+  }
+  20% {
+    transform: translateY(-15px);
+  }
+  25% {
+    transform: translateY(0);
+  }
+  30% {
+    transform: translateY(-15px);
+  }
+  50% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(0);
+  }
 }
 </style>

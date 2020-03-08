@@ -28,7 +28,6 @@ export default {
   min-width: 100%;
   height: auto;
   min-height: 100%;
-  border: 10px dashed#000;
   width: 100vw;
 }
 </style>
