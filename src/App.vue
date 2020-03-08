@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="main">
     <Map />
     <v-toolbar dark tabs flat
       ><v-app-bar-nav-icon></v-app-bar-nav-icon>
@@ -19,3 +19,16 @@ export default {
   }
 }
 </script>
+<style scoped>
+.main {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: auto;
+  min-width: 100%;
+  height: auto;
+  min-height: 100%;
+  border: 10px dashed#000;
+  width: 100vw;
+}
+</style>
