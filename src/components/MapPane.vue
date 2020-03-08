@@ -12,7 +12,7 @@
         @click="changeMode"
       >
         <v-icon>mdi-plus</v-icon></v-btn
-      >t
+      >
     </div>
     <Grampas :isEnabled="mode" />
     <mapbox

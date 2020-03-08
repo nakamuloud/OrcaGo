@@ -25,7 +25,8 @@ export default {
   bottom: 0;
   right: 0;
   margin: auto;
-
+  width: 50%;
+  height: auto;
   animation: grampas_animation 3s ease infinite;
 }
 
