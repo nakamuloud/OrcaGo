@@ -9,8 +9,10 @@
   },
   "dependencies": {
     "@types/mapbox-gl": "^1.8.0",
+    "axios": "^0.19.2",
     "core-js": "^3.6.4",
-    "mapbox-gl": "^1.8.1",
+    "express": "^4.17.1",
+    "mapbox-gl": "^1.10.0",
     "mapbox-gl-vue": "^2.0.4",
     "vue": "^2.6.11",
     "vue-mapbox": "^0.4.1",

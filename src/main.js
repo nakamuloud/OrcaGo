@@ -2,12 +2,16 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from './store'
-import VueMapbox from 'vue-mapbox'
-import Mapbox from 'mapbox-gl'
 import vuetify from './plugins/vuetify'
+import * as VueGoogleMaps from 'vue2-google-maps'
 
-Vue.use(VueMapbox, {
-  mapboxgl: Mapbox
+Vue.use(VueGoogleMaps, {
+  load: {
+    key: 'AIzaSyAiY_zczz_oIbOME2K9eDm8M_pg4vW4mOY',
+    libraries: 'places',
+    region: 'JP',
+    language: 'ja'
+  }
 })
 
 Vue.config.productionTip = false
