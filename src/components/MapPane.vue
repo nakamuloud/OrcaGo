@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <v-snackbar v-model="snackbar">
+    <v-snackbar top v-model="snackbar">
       {{ this.snackbarText }}
     </v-snackbar>
     <v-card color="red">
@@ -86,6 +86,7 @@ export default {
       this.itemImageFlag = true
       this.info.titleName = marker.title + ',Exp:' + marker.itemLevel
       this.focusedMarker = marker
+      this.itemImagePath = require('../../images/' + marker.itemName + '.png')
       // this.info.buttonMessage = marker.accessable ? 'GET' : 'もう少し近づこう'
       this.center = marker.position
     },
