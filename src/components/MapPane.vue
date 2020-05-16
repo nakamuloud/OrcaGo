@@ -61,6 +61,7 @@ export default {
     return {
       center: { lat: 35.084605, lng: 137.170834 },
       mode: false,
+      evolveFlag: false,
       zoom: 18,
       snackbar: false,
       snackbarText: '',
@@ -99,7 +100,13 @@ export default {
     },
     onButtonClicked() {
       console.log('onButtonClicked', this.focusedMarker.title)
-      this.getItem(this.focusedMarker)
+      if (!this.evolveFlag) this.getItem(this.focusedMarker)
+      else {
+        this.evolveFlag = false
+        this.itemImageFlag = false
+        this.popMessage('金シャチグランパスくんをGetした!')
+        console.log(this.info.icon.url)
+      }
       // this.itemImagePath = require('../../images/' + marker.itemName)
     },
 
@@ -113,11 +120,21 @@ export default {
       } else {
         val.exist = false
         if (this.calcLevel(val.itemLevel)) {
-          this.popMessage('アイテムゲット!レベルアップ!!!')
+          if (this.info.level === 5) {
+            this.evolveFlag = true
+            this.popMessage('やった!グランパスくんが進化したぞ!')
+            this.buttonMessage = '進化!'
+            this.info.icon.url = require('../../images/grampas_gold.png')
+            console.log(this.info.icon.url)
+            this.itemImageFlag = true
+          } else {
+            this.popMessage('アイテムゲット!レベルアップ!!!')
+            this.itemImageFlag = false
+          }
         } else {
           this.popMessage('アイテムゲット!')
+          this.itemImageFlag = false
         }
-        this.itemImageFlag = false
         this.markers.splice(
           this.markers.findIndex(({ title }) => title === marker.title),
           1
@@ -128,6 +145,9 @@ export default {
       this.info.exp += parseInt(exp)
       if (this.info.exp - this.info.level * 100 >= 100) {
         this.info.level += 1
+        if (this.info.level >= 5) {
+          this.itemImagePath = require('../../images/grampas_gold.png')
+        }
         return true
       } else {
         return false
