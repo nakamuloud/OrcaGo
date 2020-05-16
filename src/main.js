@@ -7,7 +7,7 @@ import * as VueGoogleMaps from 'vue2-google-maps'
 import config from '../config.json'
 Vue.use(VueGoogleMaps, {
   load: {
-    key: config.apiKey,
+    key: "AIzaSyCCnDP91XS-TV1l8zRq3aP7W1kJj6v3aGg",
     libraries: 'places',
     region: 'JP',
     language: 'ja'
