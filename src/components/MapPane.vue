@@ -1,17 +1,30 @@
 <template>
-  <div>
+  <v-app>
+    <v-snackbar v-model="snackbar">
+      {{ this.snackbarText }}
+    </v-snackbar>
     <v-card color="red">
-      <v-card-title>{{ this.info.titleName }}</v-card-title>
+      <v-card-title style="color:white">{{ this.info.titleName }}</v-card-title>
     </v-card>
     <img
       v-show="itemImageFlag"
       class="item"
       :src="itemImagePath"
-      @click="itemImageFlag = false"
+      @click="onImageClicked"
     />
-    <v-btn v-show="itemImageFlag" class="item_button" color="red" dark>{{
-      this.info.buttonMessage
-    }}</v-btn>
+    <v-btn
+      v-show="itemImageFlag"
+      class="item_button"
+      color="red"
+      dark
+      @click="onButtonClicked"
+      >{{ this.info.buttonMessage }}</v-btn
+    >
+    <v-card color="red" class="footer">
+      <v-card-title style="color:white"
+        >Lv:{{ this.info.level }},TotalExp:{{ this.info.exp }}</v-card-title
+      >
+    </v-card>
     <GmapMap
       :center="this.center"
       :zoom="this.zoom"
@@ -34,7 +47,7 @@
         :icon="this.info.icon"
       />
     </GmapMap>
-  </div>
+  </v-app>
 </template>
 
 <script>
@@ -49,11 +62,16 @@ export default {
       center: { lat: 35.084605, lng: 137.170834 },
       mode: false,
       zoom: 18,
+      snackbar: false,
+      snackbarText: '',
+      focusedMarker: [],
       coords: { lat: 35.084605, lng: 137.170834 },
       itemImageFlag: false,
       itemImagePath: require('../../images/grampas.png'),
       markers: [],
       info: {
+        level: 1,
+        exp: 100,
         titleName: 'シャチGo!!',
         buttonMessage: 'Get',
         icon: {
@@ -64,17 +82,56 @@ export default {
     }
   },
   methods: {
+    markerClicked(marker) {
+      this.itemImageFlag = true
+      this.info.titleName = marker.title + ',Exp:' + marker.itemLevel
+
+      this.focusedMarker = marker
+      this.center = marker.position
+    },
+    onImageClicked() {
+      this.itemImageFlag = false
+      this.info.titleName = 'シャチGo!!'
+    },
     changeMode() {
       this.mode = !this.mode
     },
-    markerClicked(marker) {
-      console.log(marker.title)
-      this.center = marker.position
-      this.info.titleName = marker.title
-      this.itemImageFlag = true
-      this.info.buttonMessage =
-        marker.accessable === true ? 'Get!!' : '距離が遠すぎる...!!'
-      // this.itemImagePath = this.markers[0].image
+    onButtonClicked() {
+      console.log('onButtonClicked', this.focusedMarker.title)
+      this.getItem(this.focusedMarker)
+      // this.itemImagePath = require('../../images/' + marker.itemName)
+    },
+
+    getItem(marker) {
+      const val = this.markers[
+        this.markers.findIndex(({ title }) => title === marker.title)
+      ]
+      console.log(val)
+      if (val.accessable == false) {
+        this.popMessage('もう少し近づこう')
+      } else {
+        val.exist = false
+        if (this.calcLevel(val.itemLevel)) {
+          this.popMessage('アイテムゲット!レベルアップ!!!')
+        } else {
+          this.popMessage('アイテムゲット!')
+        }
+        this.itemImageFlag = false
+      }
+    },
+    calcLevel(exp) {
+      this.info.exp += parseInt(exp)
+      if (this.info.exp - this.info.level * 100 >= 100) {
+        this.info.level += 1
+        return true
+      } else {
+        return false
+      }
+    },
+    popMessage(msg) {
+      console.log(msg)
+      this.snackbar = true
+      this.snackbarText = msg
     },
     distance(lat1, lng1, lat2, lng2) {
       lat1 *= Math.PI / 180
@@ -100,12 +157,12 @@ export default {
     this.center = this.coords
     // 5秒おきに実行
     setInterval(() => {
-      console.log(this.markers)
+      // console.log(this.markers)
       // 現在地を更新
       navigator.geolocation.getCurrentPosition((position) => {
         this.coords.lat = position.coords.latitude
         this.coords.lng = position.coords.longitude
-        console.log(this.coords)
+        // console.log(this.coords)
       })
       // 現在地と周囲のポイントとの距離を計算
       for (var index in this.markers) {
@@ -119,7 +176,7 @@ export default {
         ) {
           this.markers[index].accessable = true
         } else {
-          this.markers[index].accessable = false
+          this.markers[index].accessable = true
         }
       }
     }, 1000)
@@ -135,7 +192,8 @@ export default {
             },
             title: res.data[index].spot,
             itemName: res.data[index].item_name,
-            itemLevel: res.data[index].item_level
+            itemLevel: res.data[index].item_level,
+            exist: false
           })
         }
       })
@@ -155,6 +213,16 @@ export default {
   width: 50%;
   height: auto;
   animation: grampas_animation 3s ease infinite;
+}
+.footer {
+  position: absolute;
+  z-index: 10;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+  width: 100%;
+  height: auto;
 }
 .item_button {
   position: absolute;
