@@ -1,27 +1,23 @@
 <template>
   <div>
-    <div class="ui">
-      <v-btn
-        style="bottom:5%"
-        absolute
-        dark
-        fab
-        bottom
-        right
-        color="pink"
-        @click="changeMode"
-      >
-        <v-icon>mdi-plus</v-icon></v-btn
-      >
-    </div>
-    <Grampas :isEnabled="mode" />
+    <v-card color="red">
+      <v-card-title>{{ this.info.titleName }}</v-card-title>
+    </v-card>
+    <img
+      v-show="itemImageFlag"
+      class="item"
+      :src="itemImagePath"
+      @click="itemImageFlag = false"
+    />
+    <v-btn v-show="itemImageFlag" class="item_button" color="red" dark>{{
+      this.info.buttonMessage
+    }}</v-btn>
     <GmapMap
       :center="this.center"
       :zoom="this.zoom"
       :options="{ streetViewControl: false }"
       map-type-id="roadmap"
-      style="width: 100vw; height: 100vh"
-      @center_changed="onCenterChanged"
+      style="width: 100vw; height: 90vh"
     >
       <GmapMarker
         :key="index"
@@ -31,16 +27,22 @@
         :draggable="false"
         @click="markerClicked(m)"
       />
+      <GmapMarker
+        :position="this.coords"
+        :clickable="false"
+        :draggable="false"
+        :icon="this.info.icon"
+      />
     </GmapMap>
   </div>
 </template>
 
 <script>
-import Grampas from './grampas'
-// import axios from 'axios'
+// import Grampas from './grampas'
+import axios from 'axios'
 export default {
   components: {
-    Grampas
+    // Grampas
   },
   data() {
     return {
@@ -48,28 +50,17 @@ export default {
       mode: false,
       zoom: 18,
       coords: { lat: 35.084605, lng: 137.170834 },
-      markers: [
-        {
-          position: { lat: 35.71, lng: 139.72 },
-          title: 'marker_1',
-          accessable: false
-        },
-        {
-          position: { lat: 35.72, lng: 139.73 },
-          title: 'marker_2',
-          accessable: false
-        },
-        {
-          position: { lat: 35.7, lng: 139.71 },
-          title: 'marker_3',
-          accessable: false
-        },
-        {
-          position: { lat: 35.71, lng: 139.7 },
-          title: 'marker_4',
-          accessable: false
+      itemImageFlag: false,
+      itemImagePath: require('../../images/grampas.png'),
+      markers: [],
+      info: {
+        titleName: 'シャチGo!!',
+        buttonMessage: 'Get',
+        icon: {
+          url: require('../../images/grampas.png'),
+          scaledSize: { width: 44, height: 70, f: 'px', b: 'px' }
         }
-      ]
+      }
     }
   },
   methods: {
@@ -77,11 +68,13 @@ export default {
       this.mode = !this.mode
     },
     markerClicked(marker) {
-      this.center = marker.position
       console.log(marker.title)
-    },
-    onCenterChanged(center) {
-      this.coords = { lat: center.lat(), lng: center.lng() }
+      this.center = marker.position
+      this.info.titleName = marker.title
+      this.itemImageFlag = true
+      this.info.buttonMessage =
+        marker.accessable === true ? 'Get!!' : '距離が遠すぎる...!!'
+      // this.itemImagePath = this.markers[0].image
     },
     distance(lat1, lng1, lat2, lng2) {
       lat1 *= Math.PI / 180
@@ -99,8 +92,15 @@ export default {
   },
   created() {
     console.log('created')
+    // 地図の中心を設定
+    navigator.geolocation.getCurrentPosition((position) => {
+      this.coords.lat = position.coords.latitude
+      this.coords.lng = position.coords.longitude
+    })
+    this.center = this.coords
     // 5秒おきに実行
     setInterval(() => {
+      console.log(this.markers)
       // 現在地を更新
       navigator.geolocation.getCurrentPosition((position) => {
         this.coords.lat = position.coords.latitude
@@ -123,24 +123,47 @@ export default {
         }
       }
     }, 1000)
-    // console.log('GET from kintone')
-    // axios
-    //   .get('https://dstn5.kumoko.club:443/dataspider/trigger/get_kintone_spot')
-    //   .then((res) => {
-    //     console.log(res.data)
-    // this.markers.push{
-    // }
-    //   })
+    console.log('GET from kintone')
+    axios
+      .get('https://dstn5.kumoko.club:443/dataspider/trigger/get_kintone_spot')
+      .then((res) => {
+        for (let index in res.data) {
+          this.markers.push({
+            position: {
+              lat: parseFloat(res.data[index].lng),
+              lng: parseFloat(res.data[index].lat)
+            },
+            title: res.data[index].spot,
+            itemName: res.data[index].item_name,
+            itemLevel: res.data[index].item_level
+          })
+        }
+      })
   }
 }
 </script>
 
 <style scoped>
-.main_map {
+.item {
+  position: absolute;
+  z-index: 10;
   top: 0;
   left: 0;
+  bottom: 0;
+  right: 0;
+  margin: auto;
+  width: 50%;
+  height: auto;
+  animation: grampas_animation 3s ease infinite;
+}
+.item_button {
   position: absolute;
-  height: 100%;
-  width: 100%;
+  z-index: 10;
+  top: 70%;
+  left: 0;
+  right: 0;
+  margin: auto;
+  width: 50%;
+  height: auto;
 }
 </style>
