@@ -85,8 +85,8 @@ export default {
     markerClicked(marker) {
       this.itemImageFlag = true
       this.info.titleName = marker.title + ',Exp:' + marker.itemLevel
-
       this.focusedMarker = marker
+      // this.info.buttonMessage = marker.accessable ? 'GET' : 'もう少し近づこう'
       this.center = marker.position
     },
     onImageClicked() {
@@ -117,6 +117,10 @@ export default {
           this.popMessage('アイテムゲット!')
         }
         this.itemImageFlag = false
+        this.markers.splice(
+          this.markers.findIndex(({ title }) => title === marker.title),
+          1
+        )
       }
     },
     calcLevel(exp) {
@@ -166,17 +170,23 @@ export default {
       })
       // 現在地と周囲のポイントとの距離を計算
       for (var index in this.markers) {
+        this.markers[index].distance = this.distance(
+          this.markers[index].position.lat,
+          this.markers[index].position.lng,
+          this.coords.lat,
+          this.coords.lng
+        )
         if (
           this.distance(
             this.markers[index].position.lat,
             this.markers[index].position.lng,
             this.coords.lat,
             this.coords.lng
-          ) < 1.0
+          ) < 18.0
         ) {
           this.markers[index].accessable = true
         } else {
-          this.markers[index].accessable = true
+          this.markers[index].accessable = false
         }
       }
     }, 1000)
@@ -193,7 +203,8 @@ export default {
             title: res.data[index].spot,
             itemName: res.data[index].item_name,
             itemLevel: res.data[index].item_level,
-            exist: false
+            exist: false,
+            distance: 0
           })
         }
       })
