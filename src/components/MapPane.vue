@@ -203,7 +203,7 @@ export default {
             this.markers[index].position.lng,
             this.coords.lat,
             this.coords.lng
-          ) < 18.0
+          ) < 35.0
         ) {
           this.markers[index].accessable = true
         } else {
